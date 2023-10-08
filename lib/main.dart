@@ -1,7 +1,9 @@
+import 'dart:html';
 import 'package:flutter/material.dart';
-import 'package:papyrus/Auth/landing_page.dart';
+import 'package:papyrus/Pages/auth_page.dart';
 
 void main() {
+  window.document.onContextMenu.listen((evt) => evt.preventDefault());
   runApp(const MyApp());
 }
 
@@ -15,10 +17,10 @@ class MyApp extends StatelessWidget {
       title: 'Papyrus',
       theme: ThemeData(
         scaffoldBackgroundColor: const Color.fromARGB(255, 147, 120, 84),
-        fontFamily: 'Roboto',
+        fontFamily: 'ShantellSans',
         useMaterial3: true,
-        colorScheme:
-            ColorScheme.fromSwatch().copyWith(secondary: Colors.orange),
+        colorScheme: ColorScheme.fromSwatch()
+            .copyWith(secondary: const Color.fromARGB(255, 147, 120, 84)),
       ),
       home: const LandingPage(),
     );

@@ -24,6 +24,7 @@ class SignUp extends StatelessWidget {
                       width: 10), // Add spacing between icon and text field
                   Expanded(
                     child: TextField(
+                      cursorColor: Color.fromARGB(255, 72, 58, 41),
                       decoration: InputDecoration(
                         border: InputBorder
                             .none, // Hide the border of the text field
@@ -52,6 +53,7 @@ class SignUp extends StatelessWidget {
                       width: 10), // Add spacing between icon and text field
                   Expanded(
                     child: TextField(
+                      cursorColor: Color.fromARGB(255, 72, 58, 41),
                       decoration: InputDecoration(
                         border: InputBorder
                             .none, // Hide the border of the text field
@@ -80,6 +82,7 @@ class SignUp extends StatelessWidget {
                       width: 10), // Add spacing between icon and text field
                   Expanded(
                     child: TextField(
+                      cursorColor: Color.fromARGB(255, 72, 58, 41),
                       obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder
@@ -97,7 +100,8 @@ class SignUp extends StatelessWidget {
               // Handle signup logic here
             },
             style: ElevatedButton.styleFrom(
-              foregroundColor: const Color.fromARGB(
+              foregroundColor: const Color.fromARGB(255, 147, 120, 84),
+              backgroundColor: const Color.fromARGB(
                   255, 72, 58, 41), // Use amber color as the button background
             ),
             child: const Text('Sign Up'),

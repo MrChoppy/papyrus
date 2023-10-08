@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login.dart';
-import 'signup.dart';
+import '../Auth/login.dart';
+import '../Auth/signup.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -10,7 +10,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  bool isSignupSelected = true;
+  bool isSignupSelected = false;
 
   void _toggleSwitch(bool value) {
     setState(() {
@@ -21,9 +21,6 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Fun Login & Sign-Up'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
