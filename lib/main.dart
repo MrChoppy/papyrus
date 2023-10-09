@@ -1,8 +1,16 @@
 import 'dart:html';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:papyrus/Pages/auth_page.dart';
+import 'package:papyrus/Pages/home_page.dart';
 
-void main() {
+import 'Pages/auth_page.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   window.document.onContextMenu.listen((evt) => evt.preventDefault());
   runApp(const MyApp());
 }
@@ -22,7 +30,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch()
             .copyWith(secondary: const Color.fromARGB(255, 147, 120, 84)),
       ),
-      home: const LandingPage(),
+      home: HomeScreen(),
     );
   }
 }

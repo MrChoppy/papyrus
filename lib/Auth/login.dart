@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:papyrus/Pages/home_page.dart';
+
+import '../Pages/auth_page.dart';
 
 class Login extends StatelessWidget {
   @override
@@ -69,7 +70,7 @@ class Login extends StatelessWidget {
               // Handle login logic here
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
+                MaterialPageRoute(builder: (context) => const LandingPage()),
               );
             },
             style: ElevatedButton.styleFrom(

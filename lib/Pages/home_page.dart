@@ -1,81 +1,127 @@
+import 'dart:ui';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../firebase.service.dart';
+import '../widget/ghost_note_tile.dart';
+import '../widget/note_dialog.dart';
+import '../widget/note_tile.dart';
 
-import '../widgets/custom_menu.dart';
-import '../widgets/folder.dart';
-import '../widgets/note.dart';
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-          scaffoldBackgroundColor: const Color.fromARGB(255, 147, 120, 84),
-          fontFamily: 'ShantellSans',
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch()
-              .copyWith(secondary: const Color.fromARGB(255, 147, 120, 84)),
-        ),
-        home: GestureDetector(
-          onSecondaryTapDown: (TapDownDetails details) {
-            showCustomMenu(context, details.globalPosition, 'home');
-          },
-          child: Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const Padding(
-                    padding: EdgeInsets.only(left: 30, top: 30),
-                    child: Text(
-                      'Folders',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 200, // Adjust the height according to your needs
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(20.0),
-                      scrollDirection: Axis.horizontal,
-                      itemCount:
-                          5, // Replace this with the number of folders you have
-                      itemBuilder: (context, index) {
-                        return const FolderWidget(
-                            folderName: 'Work1', numberOfNotes: 10);
-                      },
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 30, top: 30),
-                    child: Text(
-                      'Notes',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 200, // Adjust the height according to your needs
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(20.0),
-                      scrollDirection: Axis.horizontal,
-                      itemCount:
-                          5, // Replace this with the number of notes you have
-                      itemBuilder: (context, index) {
-                        return NoteWidget(noteName: 'Noteaaaaaaaaaa $index');
-                      },
-                    ),
-                  ),
-                ],
-              ),
+    ScrollController _scrollController = ScrollController();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Papyrus'),
+      ),
+      body: Row(
+        children: <Widget>[
+          // View Options Section (Left Side)
+          Container(
+            width: 200, // Adjust the width as needed
+            color: Colors.blue, // Set background color for view options
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  title: const Text('Recent Notes',
+                      style: TextStyle(color: Colors.white)),
+                  tileColor: const Color.fromARGB(255, 138, 23, 23),
+                  onTap: () {
+                    // Handle Recent Notes action
+                  },
+                ),
+                ListTile(
+                  title: const Text('Folders',
+                      style: TextStyle(color: Colors.white)),
+                  onTap: () {
+                    // Handle Folders action
+                  },
+                ),
+                // Add more options as needed
+              ],
             ),
           ),
-        ));
+          const SizedBox(
+            width: 50,
+          ),
+          // Main Content Section (Right Side)
+          Expanded(
+            child: StreamBuilder(
+              stream: FirebaseService.getNotesStream(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
+                }
+                List<QueryDocumentSnapshot> notes = snapshot.data!.docs;
+                return Column(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        'Notes',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 160,
+                      width: 3000,
+                      child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context).copyWith(
+                          dragDevices: {
+                            PointerDeviceKind.touch,
+                            PointerDeviceKind.mouse,
+                          },
+                        ),
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            width: 3000,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: notes.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index < notes.length) {
+                                  var note = notes[index];
+                                  String name = note['name'] ?? '';
+                                  String content = note['content'] ?? '';
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child:
+                                        NoteTile(name: name, content: content),
+                                  );
+                                } else {
+                                  return const GhostNoteTile();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => const NoteDialog(),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }
