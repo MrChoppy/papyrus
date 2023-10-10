@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../firebase.service.dart';
 
-class NoteDialog extends StatefulWidget {
-  const NoteDialog({super.key});
+class AddNoteDialog extends StatefulWidget {
+  final String page;
+  final String? folderId;
+  const AddNoteDialog({super.key, required this.page, this.folderId});
 
   @override
-  _NoteDialogState createState() => _NoteDialogState();
+  _AddNoteDialogState createState() => _AddNoteDialogState();
 }
 
-class _NoteDialogState extends State<NoteDialog> {
+class _AddNoteDialogState extends State<AddNoteDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
@@ -44,7 +46,11 @@ class _NoteDialogState extends State<NoteDialog> {
             String name = _nameController.text;
             String content = _contentController.text;
 
-            FirebaseService.addNote(name, content);
+            if (widget.page == "home") {
+              FirebaseService.addNote(name, content);
+            } else if (widget.page == "folder") {
+              FirebaseService.addNoteToFolder(widget.folderId, name, content);
+            }
             Navigator.of(context).pop();
           },
           child: const Text('Add'),

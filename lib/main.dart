@@ -11,6 +11,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   window.document.onContextMenu.listen((evt) => evt.preventDefault());
   runApp(const MyApp());
 }
@@ -24,13 +25,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Papyrus',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 147, 120, 84),
+        scaffoldBackgroundColor: const Color(0xFF1F1F1F),
         fontFamily: 'ShantellSans',
         useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch()
-            .copyWith(secondary: const Color.fromARGB(255, 147, 120, 84)),
+            .copyWith(secondary: const Color(0xFF1F1F1F)),
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }

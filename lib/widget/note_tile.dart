@@ -4,7 +4,7 @@ class NoteTile extends StatelessWidget {
   final String name;
   final String content;
 
-  NoteTile({required this.name, required this.content});
+  const NoteTile({super.key, required this.name, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -14,14 +14,12 @@ class NoteTile extends StatelessWidget {
       child: Material(
         // Wrap your ListTile with Material widget
         borderRadius: BorderRadius.circular(12.0), // Set the border radius here
-        color: Color.fromARGB(
-            255, 1, 90, 255), // Set the background color to transparent
+        color:
+            const Color(0xFF252526), // Set the background color to transparent
         child: ListTile(
-          onTap: () {
-            print("hey");
-          },
+          onTap: () {},
           contentPadding:
-              EdgeInsets.all(8.0), // Add some padding inside the ListTile
+              const EdgeInsets.all(8.0), // Add some padding inside the ListTile
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -39,7 +37,6 @@ class NoteTile extends StatelessWidget {
               ),
             ],
           ),
-          trailing: Icon(Icons.favorite_rounded),
         ),
       ),
     );

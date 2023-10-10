@@ -1,0 +1,19 @@
+{
+    "notes": [
+      {"id": "1", "name": "Note 1", "content": "Content 1"},
+      {"id": "2", "name": "Note 2", "content": "Content 2"}
+    ],
+    "folders": [
+      {"id": "1", "name": "Folder 1"},
+      {"id": "2", "name": "Folder 2"}
+    ],
+    "notesInFolders": {
+      "1": [
+        {"id": "3", "name": "Note 3", "content": "Content 3"}
+      ],
+      "2": [
+        {"id": "4", "name": "Note 4", "content": "Content 4"}
+      ]
+    }
+  }
+  
