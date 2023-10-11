@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:papyrus/dialog/rename_note_dialog.dart';
 
 import '../dialog/delete_note_dialog.dart';
+import '../dialog/rename_folder_dialog.dart';
+import '../firebase.service.dart';
 import '/dialog/add_folder_dialog.dart';
 import '/dialog/add_note_dialog.dart';
 
@@ -59,6 +61,15 @@ void showCustomMenu(BuildContext context, Offset position, String page,
           folder: item,
         ),
       );
+    } else if (page == 'folder' && choice == 'Rename' && item != null) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => RenameFolderDialog(
+          page: 'folder',
+          folder: item,
+        ),
+      );
     } else if (page == 'home' && choice == 'Add note' && item == null) {
       if (!context.mounted) return;
       showDialog(
@@ -71,9 +82,7 @@ void showCustomMenu(BuildContext context, Offset position, String page,
         context: context,
         builder: (context) => AddNoteDialog(page: 'folder', folder: item),
       );
-    } else if (page == 'note' &&
-        choice == 'Rename' &&
-        item!['folder'] != null) {
+    } else if (page == 'note' && choice == 'Rename' && item != null) {
       if (!context.mounted) return;
       showDialog(
         context: context,
@@ -93,9 +102,38 @@ void showCustomMenu(BuildContext context, Offset position, String page,
           noteId: item['id'],
         ),
       );
+    } else if (page == 'note' && choice == 'Move' && item!['folder'] != null) {
+      List<Map<String, dynamic>> folderNames =
+          await FirebaseService.getFolders();
+      List<PopupMenuEntry<Map<String, dynamic>>> popupMenuItems =
+          folderNames.map((Map<String, dynamic> folder) {
+        return PopupMenuItem<Map<String, dynamic>>(
+          value: folder,
+          child: Text(folder[
+              'name']), // Assuming 'name' is the key for the folder name in your Firestore document
+        );
+      }).toList();
+      if (!context.mounted) return;
+      Map<String, dynamic>? selectedFolder = await showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(
+          position.dx,
+          position.dy,
+          position.dx,
+          position.dy,
+        ),
+        items: popupMenuItems,
+      );
+
+      if (selectedFolder != null) {
+        FirebaseService.moveNoteToFolder(item['id'], selectedFolder['id']);
+        // Perform move operation here
+      }
     } else {
-      // print('You selected: $choice');
+      // Handle other choices
     }
+  } else {
+    // print('You selected: $choice');
   }
 
   if (choice != null) {

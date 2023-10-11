@@ -137,6 +137,15 @@ class FirebaseService {
     });
   }
 
+  static Future<void> renameFolder(String folderId, String newName) async {
+    DocumentReference noteRef =
+        FirebaseFirestore.instance.collection('folders').doc(folderId);
+
+    await noteRef.update({
+      'name': newName,
+    });
+  }
+
   static Future<void> renameNoteInFolder(
       String folderId, String noteId, String newName) async {
     //print(folderId);
@@ -164,18 +173,33 @@ class FirebaseService {
 
   static Future<void> deleteNoteInFolder(String folderId, String noteId) async {
     try {
-      // Get a reference to the note document
       DocumentReference noteRef = FirebaseFirestore.instance
           .collection('folders')
           .doc(folderId)
           .collection('notes')
           .doc(noteId);
 
-      // Delete the note document
       await noteRef.delete();
     } catch (e) {
-      // Handle errors if necessary
       print("Error deleting note: $e");
     }
+  }
+
+  static Future<List<Map<String, dynamic>>> getFolders() async {
+    QuerySnapshot folderSnapshot =
+        await FirebaseFirestore.instance.collection('folders').get();
+    List<Map<String, dynamic>> foldersData = [];
+
+    for (var doc in folderSnapshot.docs) {
+      Map<String, dynamic> folderData = {
+        'id': doc.id,
+        'name': doc['name'],
+        // Include other folder properties as needed
+      };
+
+      foldersData.add(folderData);
+    }
+
+    return foldersData;
   }
 }
