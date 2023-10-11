@@ -3,7 +3,7 @@ import '../firebase.service.dart';
 import 'rc_menu.dart';
 
 class Menu extends StatefulWidget {
-  final Function(String?) onFolderSelected;
+  final Function(Map<String, dynamic>?) onFolderSelected;
   const Menu({super.key, required this.onFolderSelected});
 
   @override
@@ -31,14 +31,14 @@ class _MenuState extends State<Menu> {
             ListTile(
               leading: const Icon(Icons.notes, color: Colors.white),
               title: const Text('Notes', style: TextStyle(color: Colors.white)),
-              tileColor: const Color.fromARGB(255, 138, 23, 23),
               onTap: () {
                 widget.onFolderSelected(null);
               },
             ),
             GestureDetector(
               onSecondaryTapDown: (TapDownDetails details) {
-                showCustomMenu(context, details.globalPosition, 'folders', '');
+                showCustomMenu(
+                    context, details.globalPosition, 'folders', null);
               },
               child: ListTile(
                 leading:
@@ -73,15 +73,18 @@ class _MenuState extends State<Menu> {
                           return GestureDetector(
                             onSecondaryTapDown: (TapDownDetails details) {
                               showCustomMenu(context, details.globalPosition,
-                                  'folder', folderData['id']);
+                                  'folder', folderData);
                             },
                             child: ListTile(
                               contentPadding: const EdgeInsets.only(left: 50),
                               leading: const Icon(Icons.folder_copy_rounded,
                                   color: Colors.white),
-                              title: Text(folderData['name']),
+                              title: Text(
+                                folderData['name'],
+                                style: const TextStyle(color: Colors.white),
+                              ),
                               onTap: () {
-                                widget.onFolderSelected(folderData['id']);
+                                widget.onFolderSelected(folderData);
                               },
                             ),
                           );

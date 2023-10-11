@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import '../dialog/add_note_dialog.dart';
 import '../firebase.service.dart';
 import '../widget/ghost_note_tile.dart';
 import '../widget/menu.dart';
-import '../widget/add_note_dialog.dart';
 import '../widget/note_tile.dart';
 import '../widget/rc_menu.dart';
 
@@ -16,11 +16,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String? selectedFolder;
+  Map<String, dynamic>? selectedFolder;
 
-  void _onFolderSelected(String? folderName) {
+  void _onFolderSelected(Map<String, dynamic>? folder) {
     setState(() {
-      selectedFolder = folderName;
+      selectedFolder = folder;
     });
   }
 
@@ -36,9 +36,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         home: GestureDetector(
             onSecondaryTapDown: (TapDownDetails details) {
-              showCustomMenu(context, details.globalPosition, 'home', '');
+              if (selectedFolder == null) {
+                showCustomMenu(context, details.globalPosition, 'home', null);
+              } else {
+                showCustomMenu(
+                    context, details.globalPosition, 'home', selectedFolder);
+              }
             },
             child: Scaffold(
+              appBar: AppBar(
+                title: const Text("Papyrus",
+                    style: TextStyle(color: Colors.white)),
+                backgroundColor: const Color(0xFF252526),
+              ),
               body: Row(
                 children: <Widget>[
                   Menu(onFolderSelected: _onFolderSelected),
@@ -48,10 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: StreamBuilder<List<Map<String, dynamic>>>(
                       stream: (selectedFolder == null)
-                          ? FirebaseService
-                              .getNotes() // Show all notes if no folder selected
-                          : FirebaseService.getNotesInFolder(
-                              selectedFolder!), // Show notes from selected folder
+                          ? FirebaseService.getNotes()
+                          : FirebaseService.getNotesInFolder(selectedFolder),
                       builder: (context,
                           AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                         if (!snapshot.hasData) {
@@ -73,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(
                               height: 160,
-                              width: 3000,
+                              width: MediaQuery.of(context).size.width,
                               child: ScrollConfiguration(
                                 behavior:
                                     ScrollConfiguration.of(context).copyWith(
@@ -85,7 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: SizedBox(
-                                    width: 3000,
+                                    width:
+                                        MediaQuery.of(context).size.width - 200,
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       physics: const ClampingScrollPhysics(),
@@ -94,14 +103,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       itemBuilder: (context, index) {
                                         if (index < notes.length) {
                                           var note = notes[index];
-                                          String name = note['name'] ?? '';
-                                          String content =
-                                              note['content'] ?? '';
+
                                           return Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
                                             child: NoteTile(
-                                                name: name, content: content),
+                                              note: note,
+                                            ),
                                           );
                                         } else {
                                           return const GhostNoteTile();

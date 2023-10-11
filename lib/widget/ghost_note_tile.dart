@@ -6,17 +6,17 @@ class GhostNoteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8.0),
-      padding: const EdgeInsets.all(16.0),
+      height: 150.0,
+      width: 200,
+      padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.grey, // Ghost note color
+        color: Colors.grey,
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Icon(Icons.add, color: Colors.white, size: 40.0), // Add icon
-          SizedBox(height: 10.0),
+          Icon(Icons.add, color: Colors.white, size: 40.0),
           Text(
             'Add a New Note',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

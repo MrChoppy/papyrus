@@ -13,6 +13,7 @@ class FirebaseService {
     await notes.add({
       'name': name,
       'content': content,
+      'folder': "",
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
@@ -24,8 +25,10 @@ class FirebaseService {
     return notes.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return {
+          'id': doc.id,
           'name': doc['name'] ?? '',
           'content': doc['content'] ?? '',
+          'folder': doc['folder'] ?? ''
         };
       }).toList();
     });
@@ -44,10 +47,11 @@ class FirebaseService {
     });
   }
 
-  static Stream<List<Map<String, dynamic>>> getNotesInFolder(String folderId) {
+  static Stream<List<Map<String, dynamic>>> getNotesInFolder(
+      Map<String, dynamic>? folder) {
     var notesCollection = FirebaseFirestore.instance
         .collection('folders')
-        .doc(folderId)
+        .doc(folder!['id'])
         .collection('notes')
         .orderBy('timestamp', descending: true)
         .snapshots();
@@ -55,9 +59,12 @@ class FirebaseService {
     return notesCollection.map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data();
+
         return {
+          'id': doc.id,
           'name': data['name'] ?? '',
           'content': data['content'] ?? '',
+          'folder': data['folder'] ?? '',
           'timestamp': data['timestamp'] ?? FieldValue.serverTimestamp(),
         };
       }).toList();
@@ -77,7 +84,8 @@ class FirebaseService {
   }
 
   static Future<void> addNoteToFolder(
-      String? folderId, String name, String content) async {
+      String? folderId, String name, String content, String folder) async {
+    //print(folderId);
     CollectionReference folderNotes = FirebaseFirestore.instance
         .collection('folders')
         .doc(folderId)
@@ -86,6 +94,7 @@ class FirebaseService {
     await folderNotes.add({
       'name': name,
       'content': content,
+      'folder': folderId,
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
@@ -111,11 +120,62 @@ class FirebaseService {
       await folderNotes.add({
         'name': noteData['name'],
         'content': noteData['content'],
+        'folder': noteData['folder'] ?? '',
         'timestamp': noteData['timestamp'] ?? FieldValue.serverTimestamp(),
       });
 
-      // Delete the note from the notes collection
       await noteRef.delete();
+    }
+  }
+
+  static Future<void> renameNote(String noteId, String newName) async {
+    DocumentReference noteRef =
+        FirebaseFirestore.instance.collection('notes').doc(noteId);
+
+    await noteRef.update({
+      'name': newName,
+    });
+  }
+
+  static Future<void> renameNoteInFolder(
+      String folderId, String noteId, String newName) async {
+    //print(folderId);
+    DocumentReference noteRef = FirebaseFirestore.instance
+        .collection('folders')
+        .doc(folderId)
+        .collection('notes')
+        .doc(noteId);
+
+    await noteRef.update({
+      'name': newName,
+    });
+  }
+
+  static Future<void> deleteNote(String noteId) async {
+    try {
+      DocumentReference noteRef =
+          FirebaseFirestore.instance.collection('notes').doc(noteId);
+
+      await noteRef.delete();
+    } catch (e) {
+      print("Error deleting note: $e");
+    }
+  }
+
+  static Future<void> deleteNoteInFolder(String folderId, String noteId) async {
+    try {
+      // Get a reference to the note document
+      DocumentReference noteRef = FirebaseFirestore.instance
+          .collection('folders')
+          .doc(folderId)
+          .collection('notes')
+          .doc(noteId);
+
+      // Delete the note document
+      await noteRef.delete();
+    } catch (e) {
+      // Handle errors if necessary
+      print("Error deleting note: $e");
     }
   }
 }

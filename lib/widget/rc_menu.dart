@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:papyrus/dialog/rename_note_dialog.dart';
 
-import 'add_folder_dialog.dart';
-import 'add_note_dialog.dart';
+import '../dialog/delete_note_dialog.dart';
+import '/dialog/add_folder_dialog.dart';
+import '/dialog/add_note_dialog.dart';
 
 class CustomPopupMenu {
-  static const List<String> homePageChoices = ['Add note', 'Home Option 2'];
+  static const List<String> homePageChoices = ['Add note'];
   static const List<String> folderChoices = [
     'Add note',
     'Rename',
@@ -14,11 +16,11 @@ class CustomPopupMenu {
   static const List<String> foldersChoices = [
     'Add folder',
   ];
-  static const List<String> noteChoices = ['Rename', 'Delete'];
+  static const List<String> noteChoices = ['Rename', 'Delete', 'Move'];
 }
 
 void showCustomMenu(BuildContext context, Offset position, String page,
-    String? folderId) async {
+    [Map<String, dynamic>? item]) async {
   List<String> menuItems = [];
   if (page == 'home') {
     menuItems = CustomPopupMenu.homePageChoices;
@@ -41,22 +43,12 @@ void showCustomMenu(BuildContext context, Offset position, String page,
       );
     }).toList(),
   );
-
   if (choice != null) {
     if (page == 'folders' && choice == 'Add folder') {
       if (!context.mounted) return;
       showDialog(
         context: context,
-        builder: (context) =>
-            const AddFolderDialog(), // Create a new dialog for adding a folder
-      );
-    } else if (page == 'home' && choice == 'Add note') {
-      if (!context.mounted) return;
-      showDialog(
-        context: context,
-        builder: (context) => const AddNoteDialog(
-          page: 'home',
-        ), // Create a new dialog for adding a folder
+        builder: (context) => const AddFolderDialog(),
       );
     } else if (page == 'folder' && choice == 'Add note') {
       if (!context.mounted) return;
@@ -64,16 +56,49 @@ void showCustomMenu(BuildContext context, Offset position, String page,
         context: context,
         builder: (context) => AddNoteDialog(
           page: 'folder',
-          folderId: folderId,
-        ), // Create a new dialog for adding a folder
+          folder: item,
+        ),
+      );
+    } else if (page == 'home' && choice == 'Add note' && item == null) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AddNoteDialog(page: 'home', folder: item),
+      );
+    } else if (page == 'home' && choice == 'Add note' && item != null) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AddNoteDialog(page: 'folder', folder: item),
+      );
+    } else if (page == 'note' &&
+        choice == 'Rename' &&
+        item!['folder'] != null) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => RenameNoteDialog(
+          page: 'note',
+          note: item,
+        ),
+      );
+    } else if (page == 'note' &&
+        choice == 'Delete' &&
+        item!['folder'] != null) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => DeleteNoteDialog(
+          folderId: item['folder'],
+          noteId: item['id'],
+        ),
       );
     } else {
-      print('You selected: $choice');
+      // print('You selected: $choice');
     }
   }
 
-  // Handle the selected choice here
   if (choice != null) {
-    print('You selected: $choice');
+    // print('You selected: $choice');
   }
 }
