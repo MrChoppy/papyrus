@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papyrus/firebase.service.dart';
+import '../Firebase/firebase_folder.dart';
 
 class RenameFolderDialog extends StatefulWidget {
   final Map<String, dynamic> folder;
@@ -67,7 +67,7 @@ class _RenameFolderDialogState extends State<RenameFolderDialog> {
           ),
           onPressed: () {
             String newName = nameController.text;
-            FirebaseService.renameFolder(widget.folder['id'], newName);
+            FirebaseFolder.renameFolder(widget.folder['id'], newName);
 
             Navigator.of(context).pop();
           },

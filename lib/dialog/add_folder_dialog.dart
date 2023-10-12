@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papyrus/firebase.service.dart';
+import '../Firebase/firebase_folder.dart';
 
 class AddFolderDialog extends StatefulWidget {
   const AddFolderDialog({super.key});
@@ -64,7 +64,7 @@ class _AddFolderDialogState extends State<AddFolderDialog> {
                 onPressed: () async {
                   String folderName = _folderNameController.text.trim();
                   if (folderName.isNotEmpty) {
-                    await FirebaseService.addFolder(folderName);
+                    await FirebaseFolder.addFolder(folderName);
                     if (!context.mounted) return;
                     Navigator.of(context).pop();
                   } else {

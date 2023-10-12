@@ -17,7 +17,7 @@ class _NoteTileState extends State<NoteTile> {
   Widget build(BuildContext context) {
     String name = widget.note['name'];
     String content = widget.note['content'];
-    String folder = widget.note['folder'];
+    //String folder = widget.note['folder'];
     return GestureDetector(
       onSecondaryTapDown: (TapDownDetails details) {
         showCustomMenu(context, details.globalPosition, 'note', widget.note);
@@ -35,9 +35,6 @@ class _NoteTileState extends State<NoteTile> {
                   builder: (BuildContext context) {
                     return EditNoteDialog(
                       note: widget.note,
-                      onSave: (editedContent) {
-                        print('Edited Content: $editedContent');
-                      },
                     );
                   });
             },
@@ -54,7 +51,7 @@ class _NoteTileState extends State<NoteTile> {
                   ),
                 ),
                 Text(
-                  'Content: $content',
+                  'Content: ${content.length > 40 ? '${content.substring(0, 40)}...' : content}',
                   style: const TextStyle(color: Colors.white),
                 ),
               ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../firebase.service.dart';
+import '../Firebase/firebase_notes.dart';
 
 class AddNoteDialog extends StatefulWidget {
   final String page;
@@ -65,9 +64,9 @@ class _AddNoteDialogState extends State<AddNoteDialog> {
           onPressed: () {
             String name = _nameController.text;
             if (widget.page == "home") {
-              FirebaseService.addNote(name, "");
+              FirebaseNote.addNote(name, "");
             } else if (widget.page == "folder") {
-              FirebaseService.addNoteToFolder(
+              FirebaseNote.addNoteToFolder(
                   widget.folder!['id'], name, "", widget.folder!['name']);
             }
             Navigator.of(context).pop();

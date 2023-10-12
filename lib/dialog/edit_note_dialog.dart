@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:papyrus/Firebase/firebase_notes.dart';
 
 class EditNoteDialog extends StatefulWidget {
   final Map<String, dynamic> note;
-  final Function(String) onSave;
 
   const EditNoteDialog({
     Key? key,
-    required this.onSave,
     required this.note,
   }) : super(key: key);
 
@@ -15,12 +14,12 @@ class EditNoteDialog extends StatefulWidget {
 }
 
 class _EditNoteDialogState extends State<EditNoteDialog> {
-  late TextEditingController _controller;
+  late TextEditingController contentController;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.note['content']);
+    contentController = TextEditingController(text: widget.note['content']);
   }
 
   @override
@@ -51,7 +50,7 @@ class _EditNoteDialogState extends State<EditNoteDialog> {
           style: const TextStyle(
             color: Colors.white,
           ),
-          controller: _controller,
+          controller: contentController,
           decoration: const InputDecoration(
             labelText: 'Enter note content...',
             labelStyle: TextStyle(
@@ -82,8 +81,15 @@ class _EditNoteDialogState extends State<EditNoteDialog> {
             ),
           ),
           onPressed: () {
-            widget.onSave(_controller.text);
-            Navigator.of(context).pop();
+            if (widget.note['folder'] == "") {
+              FirebaseNote.editContentNote(
+                  widget.note['id'], contentController.text);
+              Navigator.of(context).pop();
+            } else if (widget.note['folder'] != "") {
+              FirebaseNote.editContentNoteInFolder(widget.note['id'],
+                  contentController.text, widget.note['folder']);
+              Navigator.of(context).pop();
+            }
           },
         ),
       ],
@@ -92,7 +98,7 @@ class _EditNoteDialogState extends State<EditNoteDialog> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    contentController.dispose();
     super.dispose();
   }
 }

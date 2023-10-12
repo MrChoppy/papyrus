@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papyrus/firebase.service.dart';
+import '../Firebase/firebase_notes.dart';
 
 class RenameNoteDialog extends StatefulWidget {
   final Map<String, dynamic> note;
@@ -67,10 +67,10 @@ class _RenameNoteDialogState extends State<RenameNoteDialog> {
             String newName = nameController.text;
 
             if (widget.note['folder'] != "") {
-              FirebaseService.renameNoteInFolder(
+              FirebaseNote.renameNoteInFolder(
                   widget.note['folder'], widget.note['id'], newName);
             } else if (widget.note['folder'] == "") {
-              FirebaseService.renameNote(widget.note['id'], newName);
+              FirebaseNote.renameNote(widget.note['id'], newName);
             }
             Navigator.of(context).pop();
           },

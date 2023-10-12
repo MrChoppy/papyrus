@@ -18,7 +18,7 @@ class GhostNoteTile extends StatelessWidget {
         children: <Widget>[
           Icon(Icons.add, color: Colors.white, size: 40.0),
           Text(
-            'Add a New Note',
+            'Add a New Note/Folder by right clicking',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ],

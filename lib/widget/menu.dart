@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../firebase.service.dart';
+import '../Firebase/firebase_folder.dart';
 import 'rc_menu.dart';
 
 class Menu extends StatefulWidget {
@@ -17,7 +17,7 @@ class _MenuState extends State<Menu> {
   @override
   void initState() {
     super.initState();
-    foldersStream = FirebaseService.getFoldersStream();
+    foldersStream = FirebaseFolder.getFoldersStream();
   }
 
   @override
@@ -30,7 +30,8 @@ class _MenuState extends State<Menu> {
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.notes, color: Colors.white),
-              title: const Text('Notes', style: TextStyle(color: Colors.white)),
+              title: const Text('Rogue notes',
+                  style: TextStyle(color: Colors.white)),
               onTap: () {
                 widget.onFolderSelected(null);
               },
@@ -61,7 +62,9 @@ class _MenuState extends State<Menu> {
                 stream: foldersStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return const CircularProgressIndicator(
+                      color: Color(0xFF1F1F1F),
+                    );
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

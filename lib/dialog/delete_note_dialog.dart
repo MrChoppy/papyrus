@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:papyrus/firebase.service.dart';
+import '../Firebase/firebase_notes.dart';
 
 class DeleteNoteDialog extends StatelessWidget {
   final String folderId;
@@ -42,10 +42,10 @@ class DeleteNoteDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             if (folderId == "") {
-              FirebaseService.deleteNote(noteId);
+              FirebaseNote.deleteNote(noteId);
               Navigator.of(context).pop();
             } else if (folderId != "") {
-              FirebaseService.deleteNoteInFolder(folderId, noteId);
+              FirebaseNote.deleteNoteInFolder(folderId, noteId);
               Navigator.of(context).pop();
             }
           },

@@ -1,17 +1,29 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../Pages/home_page.dart';
+import '../Firebase/firebase.service.dart';
 
 class SignUp extends StatelessWidget {
+  final FirebaseService firebaseService = FirebaseService();
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  SignUp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
-          const SizedBox(
+          SizedBox(
             width: 300,
             child: InputDecorator(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Full Name',
+                labelStyle:
+                    TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                 border:
                     OutlineInputBorder(), // Add border to the input decorator
                 contentPadding:
@@ -19,13 +31,17 @@ class SignUp extends StatelessWidget {
               ),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.person, color: Color.fromARGB(255, 72, 58, 41)),
-                  SizedBox(
+                  const Icon(Icons.person,
+                      color: Color.fromARGB(255, 255, 255, 255)),
+                  const SizedBox(
                       width: 10), // Add spacing between icon and text field
                   Expanded(
                     child: TextField(
-                      cursorColor: Color.fromARGB(255, 72, 58, 41),
-                      decoration: InputDecoration(
+                      controller: fullNameController,
+                      cursorColor: const Color.fromARGB(255, 255, 255, 255),
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255)),
+                      decoration: const InputDecoration(
                         border: InputBorder
                             .none, // Hide the border of the text field
                       ),
@@ -36,11 +52,13 @@ class SignUp extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const SizedBox(
+          SizedBox(
             width: 300,
             child: InputDecorator(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
+                labelStyle:
+                    TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                 border:
                     OutlineInputBorder(), // Add border to the input decorator
                 contentPadding:
@@ -48,13 +66,17 @@ class SignUp extends StatelessWidget {
               ),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.mail, color: Color.fromARGB(255, 72, 58, 41)),
-                  SizedBox(
+                  const Icon(Icons.mail,
+                      color: Color.fromARGB(255, 255, 255, 255)),
+                  const SizedBox(
                       width: 10), // Add spacing between icon and text field
                   Expanded(
                     child: TextField(
-                      cursorColor: Color.fromARGB(255, 72, 58, 41),
-                      decoration: InputDecoration(
+                      controller: emailController,
+                      cursorColor: const Color.fromARGB(255, 255, 255, 255),
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255)),
+                      decoration: const InputDecoration(
                         border: InputBorder
                             .none, // Hide the border of the text field
                       ),
@@ -65,11 +87,13 @@ class SignUp extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const SizedBox(
+          SizedBox(
             width: 300,
             child: InputDecorator(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
+                labelStyle:
+                    TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                 border:
                     OutlineInputBorder(), // Add border to the input decorator
                 contentPadding:
@@ -77,16 +101,19 @@ class SignUp extends StatelessWidget {
               ),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.lock, color: Color.fromARGB(255, 72, 58, 41)),
-                  SizedBox(
+                  const Icon(Icons.lock,
+                      color: Color.fromARGB(255, 255, 255, 255)),
+                  const SizedBox(
                       width: 10), // Add spacing between icon and text field
                   Expanded(
                     child: TextField(
-                      cursorColor: Color.fromARGB(255, 72, 58, 41),
+                      controller: passwordController,
+                      cursorColor: const Color.fromARGB(255, 255, 255, 255),
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255)),
                       obscureText: true,
-                      decoration: InputDecoration(
-                        border: InputBorder
-                            .none, // Hide the border of the text field
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
                       ),
                     ),
                   ),
@@ -96,13 +123,35 @@ class SignUp extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
-              // Handle signup logic here
+            onPressed: () async {
+              String fullName = fullNameController.text.trim();
+              String email = emailController.text.trim();
+              String password = passwordController.text.trim();
+              if (fullName.isNotEmpty &&
+                  email.isNotEmpty &&
+                  password.isNotEmpty) {
+                User? user = await firebaseService.registerWithEmailAndPassword(
+                    email, password, fullName);
+
+                if (user != null) {
+                  if (!context.mounted) return;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  );
+                } else {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to register. Please try again.'),
+                    ),
+                  );
+                }
+              }
             },
             style: ElevatedButton.styleFrom(
-              foregroundColor: const Color.fromARGB(255, 147, 120, 84),
-              backgroundColor: const Color.fromARGB(
-                  255, 72, 58, 41), // Use amber color as the button background
+              foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+              backgroundColor: const Color.fromARGB(255, 60, 60, 61),
             ),
             child: const Text('Sign Up'),
           ),
